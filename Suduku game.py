@@ -8,14 +8,14 @@ class Main:
             frame.pack()
             master.title('SUDOKU') 
             #DISPLAY
-            group=[[0,1,2,9,10,11,18,19,20],[3,4,5,12,13,14,21,22,23],[6,7,8,15,16,17,24,25,26],[27,28,29,36,37,38,45,46,47],[30,31,32,39,40,41,48,49,50],
+            self.group=[[0,1,2,9,10,11,18,19,20],[3,4,5,12,13,14,21,22,23],[6,7,8,15,16,17,24,25,26],[27,28,29,36,37,38,45,46,47],[30,31,32,39,40,41,48,49,50],
                    [33,34,35,42,43,44,51,52,53],[54,55,56,63,64,65,72,73,74],[57,58,59,66,67,68,75,76,77],[60,61,62,69,70,71,78,79,80]]
             self.entry=[] # Save block data
             block_number=0 #intitail
             self.allBlocks=[]
             for i in range(9):
                   for j in range(9):
-                        self.allBlocks.append(self.createBlock(i,j,frame,block_number,group))
+                        self.allBlocks.append(self.createBlock(i,j,frame,block_number,self.group))
                         block_number+=1
             print(len(self.allBlocks))
             Button(frame, text='CHECK!',
@@ -50,6 +50,32 @@ class Main:
                                     lis.append(self.allBlocks[j].getValue())
             return True
       
+      def check_column(self):
+            for i in range(0,9,1):
+                  lis=[]
+                  for j in range(i,81,9):
+                        if self.allBlocks[j].getValue()!=0:
+                              if self.allBlocks[j].getValue() in lis:
+                                    lis.append(self.allBlocks[j].getValue())
+                                    return False
+                              else:
+                                    lis.append(self.allBlocks[j].getValue())
+            return True
+
+      def check_group(self):
+            for i in range(9):
+                  lis=[]
+                  for j in range(9):
+                        if self.allBlocks[self.group[i][j]].getValue() !=0:
+                              if self.allBlocks[self.group[i][j]].getValue() in lis:
+                                    return False
+                              else:
+                                    lis.append(self.allBlocks[self.group[i][j]].getValue())
+            return True      
+            
+                        
+            
+      
       def blinding(self):
             for i in range(81):
                   if self.entry[i].get() != "":
@@ -60,11 +86,10 @@ class Main:
                   
       def check(self):
             self.blinding()
-            print(self.check_row())
+            print(self.check_row() and self.check_column() and self.check_group())
                         
                         
                   
-            
             
             
 
@@ -72,7 +97,7 @@ class Main:
             f=open("Text.txt")
             self.file=f.read()
             self.listsplit=[]
-            self.file=self.file.split(" ")
+            self.file=self.file.replace("\n"," ").split(" ")
            
             for i in range(81):
                   if self.file[i]=="0":
