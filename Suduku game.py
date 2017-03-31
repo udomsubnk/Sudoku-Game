@@ -19,7 +19,7 @@ class Main:
                         block_number+=1
             print(len(self.allBlocks))
             Button(frame, text='CHECK!',
-                             command='self.check',width=10).grid(row=10,column=1,columnspan=3)
+                             command=self.check,width=10).grid(row=10,column=1,columnspan=3)
 
             Button(frame, text='CLEAR!',
                          command='quit',width=10).grid(row=10,column=3,columnspan=3)
@@ -39,7 +39,31 @@ class Main:
                   if block_number in group[index]:
                        return  Block(block_number,i,j,index)
             
-      #def check(self):
+      def check_row(self):
+            for i in range(0,81,9):
+                  lis=[]
+                  for j in range(i,i+9):
+                       if self.allBlocks[j].getValue() != 0 :
+                              if self.allBlocks[j].getValue() in lis:
+                                    return False
+                              else:
+                                    lis.append(self.allBlocks[j].getValue())
+            return True
+      
+      def blinding(self):
+            for i in range(81):
+                  if self.entry[i].get() != "":
+                        self.allBlocks[i].setValue(self.entry[i].get())
+                  else:
+                        self.allBlocks[i].setValue(0)
+                  print(self.allBlocks[i].getValue())
+                  
+      def check(self):
+            self.blinding()
+            print(self.check_row())
+                        
+                        
+                  
             
             
             
@@ -52,7 +76,7 @@ class Main:
            
             for i in range(81):
                   if self.file[i]=="0":
-                        self.entry[i].insert(1," ")
+                        self.entry[i].insert(1,"")
                   else:
                         self.entry[i].insert(1,self.file[i])
                         self.entry[i].configure(state='disabled')
