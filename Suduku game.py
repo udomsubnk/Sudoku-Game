@@ -19,13 +19,13 @@ class Main:
                         block_number+=1
             print(len(self.allBlocks))
             Button(frame, text='CHECK!',
-                             command='quit',width=10).grid(row=10,column=1,columnspan=3)
+                             command='self.check',width=10).grid(row=10,column=1,columnspan=3)
 
             Button(frame, text='CLEAR!',
                          command='quit',width=10).grid(row=10,column=3,columnspan=3)
 
             Button(frame, text='START!',
-                         command='quit',width=10).grid(row=10,column=5,columnspan=3)
+                         command=self.start,width=10).grid(row=10,column=5,columnspan=3)
             
       def createBlock(self,i,j,frame,block_number,group):
             bigfont = ('TH Sarabun New',25)
@@ -38,6 +38,30 @@ class Main:
             for index in range(9):
                   if block_number in group[index]:
                        return  Block(block_number,i,j,index)
+            
+      #def check(self):
+            
+            
+            
+
+      def start(self):
+            f=open("Text.txt")
+            self.file=f.read()
+            self.listsplit=[]
+            self.file=self.file.split(" ")
+           
+            for i in range(81):
+                  if self.file[i]=="0":
+                        self.entry[i].insert(1," ")
+                  else:
+                        self.entry[i].insert(1,self.file[i])
+                        self.entry[i].configure(state='disabled')
+                        self.allBlocks[i].setValue(self.file[i])
+                        print(self.allBlocks[i].getValue())
+                  
+                 
+            
+            
             
             
 class Block:
