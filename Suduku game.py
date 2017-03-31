@@ -1,25 +1,23 @@
 from tkinter import *
 
 class Main:
+      
       def __init__(self,master):
             frame = Frame(master)
             frame = Frame(master,background="white")
             frame.pack()
-            master.title('SUDOKU')
-            
+            master.title('SUDOKU') 
             #DISPLAY
-            self.entry=[]
+            group=[[0,1,2,9,10,11,18,19,20],[3,4,5,12,13,14,21,22,23],[6,7,8,15,16,17,24,25,26],[27,28,29,36,37,38,45,46,47],[30,31,32,39,40,41,48,49,50],
+                   [33,34,35,42,43,44,51,52,53],[54,55,56,63,64,65,72,73,74],[57,58,59,66,67,68,75,76,77],[60,61,62,69,70,71,78,79,80]]
+            self.entry=[] # Save block data
+            block_number=0 #intitail
+            self.allBlocks=[]
             for i in range(9):
                   for j in range(9):
-                        bigfont = ('TH Sarabun New',25)
-                        display=Entry(frame,
-                                   font=bigfont,width=3,
-                                   fg="black",bg='white',
-                                   bd=2,justify=CENTER)
-                        display.grid(row=i, column=j,sticky="NWNESWSE")
-
-                        self.entry.append(display) 
-            
+                        self.allBlocks.append(self.createBlock(i,j,frame,block_number,group))
+                        block_number+=1
+            print(len(self.allBlocks))
             Button(frame, text='CHECK!',
                              command='quit',width=10).grid(row=10,column=1,columnspan=3)
 
@@ -29,6 +27,17 @@ class Main:
             Button(frame, text='START!',
                          command='quit',width=10).grid(row=10,column=5,columnspan=3)
             
+      def createBlock(self,i,j,frame,block_number,group):
+            bigfont = ('TH Sarabun New',25)
+            display=Entry(frame,
+                                   font=bigfont,width=3,
+                                   fg="black",bg='white',
+                                   bd=2,justify=CENTER)
+            display.grid(row=i, column=j,sticky="NWNESWSE")
+            self.entry.append(display)
+            for index in range(9):
+                  if block_number in group[index]:
+                       return  Block(block_number,i,j,index)
             
             
 class Block:
