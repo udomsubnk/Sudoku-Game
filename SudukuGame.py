@@ -24,14 +24,14 @@ class Main:
                         block_number+=1 #create block 81 block
             #print(len(self.allBlocks))
             
-            Button(frame, text='CREATE SEVER!',
-                             command=self.startServer,width=15).grid(row=10,column=1,columnspan=3)
+            Button(frame, text='CREATE SEVER',
+                             command=self.startServer,width=10).grid(row=10,column=1,columnspan=3)
 
-            Button(frame, text='JOIN!!',
-                         command='quit',width=10).grid(row=10,column=3,columnspan=3)
+            Button(frame, text='JOIN',
+                         command=self.joinServer,width=10).grid(row=10,column=5,columnspan=3)
 
             Button(frame, text='START!',
-                         command=self.start,width=10).grid(row=10,column=5,columnspan=3)
+                         command=self.start,width=10).grid(row=10,column=3,columnspan=3)
             
       def createBlock(self,i,j,frame,block_number,group):
             bigfont = ('TH Sarabun New',25)
@@ -107,7 +107,7 @@ class Main:
             
       def startServer(self):
             serversocket = socket.socket(socket.AF_INET , socket.SOCK_STREAM)
-            host=' '
+            host=''
             port=9999
             serversocket.bind((host,port))
             #queue up to n request
@@ -118,11 +118,12 @@ class Main:
 
       def joinServer(self):
              s = socket.socket(socket.AF_INET , socket.SOCK_STREAM)
-             host=' '
+             host=''
              port=9999
             #Connect to hostname on the part
              try:
-                  s.connect((host,port))    
+                  s.connect((host,port))
+                  print("YOU CONNECTED ALREADY!")
              except  socket.error as msg:
                    print (msg)
         
