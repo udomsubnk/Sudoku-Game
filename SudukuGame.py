@@ -1,5 +1,6 @@
 from tkinter import *
-
+import socket
+import re
 class Main:
       
       def __init__(self,master):
@@ -13,15 +14,20 @@ class Main:
             self.entry=[] # Save block data
             block_number=0 #intitail
             self.allBlocks=[]
+            self.checkStart = FALSE
+            self.countBlankentry=81
+            self.keepValueTrue = [FALSE]*81
+                       
             for i in range(9):
                   for j in range(9):
                         self.allBlocks.append(self.createBlock(i,j,frame,block_number,self.group))
-                        block_number+=1
-            print(len(self.allBlocks))
-            Button(frame, text='CHECK!',
-                             command=self.check,width=10).grid(row=10,column=1,columnspan=3)
+                        block_number+=1 #create block 81 block
+            #print(len(self.allBlocks))
+            
+            Button(frame, text='CREATE SEVER!',
+                             command=self.startServer,width=15).grid(row=10,column=1,columnspan=3)
 
-            Button(frame, text='CLEAR!',
+            Button(frame, text='JOIN!!',
                          command='quit',width=10).grid(row=10,column=3,columnspan=3)
 
             Button(frame, text='START!',
@@ -29,10 +35,35 @@ class Main:
             
       def createBlock(self,i,j,frame,block_number,group):
             bigfont = ('TH Sarabun New',25)
+   
+            def callback(sv,block_number):
+                  #print (sv.get())
+                  #print (block_number)
+                  if self.checkStart:                        
+                        print (len(sv.get()))
+                        if sv.get()=="":
+                               self.entry[block_number].configure(bg='white')
+                               self.keepValueTrue[block_number]=FALSE
+                        elif ((len(sv.get())>1) or not re.search(r'[1-9]',sv.get()[0])): #เอาแต่อาเรย์ช่อง0
+                              self.entry[block_number].configure(bg='red')
+                              self.keepValueTrue[block_number]=FALSE
+                        elif self.check():
+                              self.entry[block_number].configure(bg='green')
+                              self.keepValueTrue[block_number]=TRUE
+                              print('True')
+                        else:
+                              self.entry[block_number].configure(bg='red')
+                              self.keepValueTrue[block_number]=FALSE
+                              print('False')
+                        print (str(sum(self.keepValueTrue))+":"+str(self.countBlankentry)) #True:AllBlank
+                        
+ 
+            sv = StringVar()
+            sv.trace("w", lambda name, index, mode, sv=sv: callback(sv,block_number))
             display=Entry(frame,
                                    font=bigfont,width=3,
                                    fg="black",bg='white',
-                                   bd=2,justify=CENTER)
+                                   bd=2,justify=CENTER,textvariable=sv)
             display.grid(row=i, column=j,sticky="NWNESWSE")
             self.entry.append(display)
             for index in range(9):
@@ -71,52 +102,72 @@ class Main:
                                     return False
                               else:
                                     lis.append(self.allBlocks[self.group[i][j]].getValue())
-            return True      
-            
-                        
-            
+            return True
       
+            
+      def startServer(self):
+            serversocket = socket.socket(socket.AF_INET , socket.SOCK_STREAM)
+            host=' '
+            port=9999
+            serversocket.bind((host,port))
+            #queue up to n request
+            serversocket.listen(10)
+            print("SERVER START!")
+            clientsocket,addr=serversocket.accept()
+            print("CLIENT CONNECT ALREADY!")
+
+      def joinServer(self):
+             s = socket.socket(socket.AF_INET , socket.SOCK_STREAM)
+             host=' '
+             port=9999
+            #Connect to hostname on the part
+             try:
+                  s.connect((host,port))    
+             except  socket.error as msg:
+                   print (msg)
+        
+                  
+            
       def blinding(self):
             for i in range(81):
                   if self.entry[i].get() != "":
                         self.allBlocks[i].setValue(self.entry[i].get())
                   else:
                         self.allBlocks[i].setValue(0)
-                  print(self.allBlocks[i].getValue())
+                  #print(self.allBlocks[i].getValue())
                   
       def check(self):
             self.blinding()
-            print(self.check_row() and self.check_column() and self.check_group())
+            return self.check_row() and self.check_column() and self.check_group()             
                         
-                        
-                  
-            
-            
 
       def start(self):
             f=open("Text.txt")
             self.file=f.read()
             self.listsplit=[]
             self.file=self.file.replace("\n"," ").split(" ")
-           
+            
             for i in range(81):
                   if self.file[i]=="0":
                         self.entry[i].insert(1,"")
+                        
+                        
                   else:
                         self.entry[i].insert(1,self.file[i])
                         self.entry[i].configure(state='disabled')
                         self.allBlocks[i].setValue(self.file[i])
-                        print(self.allBlocks[i].getValue())
-                  
+                        self.countBlankentry-=1
+                        #print(self.allBlocks[i].getValue())
+            
+            print (self.countBlankentry)
+            self.checkStart = TRUE
+            
                  
-            
-            
+              
             
             
 class Block:
       block_number=0 #block name 
-      x=0 #position axis x
-      y=0 #position axis y
       value=0 #input value
       group=0 #group each 3x3
 
@@ -126,14 +177,6 @@ class Block:
             self.y=y
             self.group=group
 
-      def getX(self):
-            return self.x
-      
-      def getY(self):
-            return self.y
-
-      def getName(self):
-            return self.name
 
       def getGroup(self):
             return self.group
@@ -144,11 +187,10 @@ class Block:
       def getValue(self):
             return self.value
       
-                        
-      
-            
+                                   
 
 if __name__=='__main__':
+      
       root=Tk()
       Main(root)
       root.mainloop()
