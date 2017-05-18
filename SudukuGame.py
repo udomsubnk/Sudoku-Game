@@ -5,7 +5,7 @@ class Main:
       
       def __init__(self,master):
             frame = Frame(master)
-            frame = Frame(master,background="white")
+            frame = Frame(master,background='#000000')
             frame.pack()
             master.title('SUDOKU') 
             #DISPLAY
@@ -17,6 +17,7 @@ class Main:
             self.checkStart = FALSE
             self.countBlankentry=81
             self.keepValueTrue = [FALSE]*81
+          
                        
             for i in range(9):
                   for j in range(9):
@@ -24,14 +25,31 @@ class Main:
                         block_number+=1 #create block 81 block
             #print(len(self.allBlocks))
             
-            Button(frame, text='CREATE SEVER',
+            Button(frame, text='CreateServer',
                              command=self.startServer,width=10).grid(row=10,column=1,columnspan=3)
 
-            Button(frame, text='JOIN',
+            Button(frame, text='JoinServer',
                          command=self.joinServer,width=10).grid(row=10,column=5,columnspan=3)
 
             Button(frame, text='START!',
                          command=self.start,width=10).grid(row=10,column=3,columnspan=3)
+            
+            
+
+            self.MyScore =Scale(orient='horizontal', from_=0, to=128,bg='#00FF7F',borderwidth=5,label='MY SCORE ',length=370,width='40')
+            self.MyScore.pack()
+            self.setMyScore(0)
+            
+            self.OppenentsScore =Scale(orient='horizontal', from_=0, to=128,bg='#FF6666',borderwidth=5,label='MY SCORE ',length=370,width='40')
+            self.OppenentsScore.pack()
+            self.setOppenentsScore(0)
+            
+      def setMyScore(self,n):
+            self.MyScore.set(n)
+           
+
+      def setOppenentsScore(self,n):
+            self.OppenentsScore.set(n)
             
       def createBlock(self,i,j,frame,block_number,group):
             bigfont = ('TH Sarabun New',25)
@@ -50,6 +68,7 @@ class Main:
                         elif self.check():
                               self.entry[block_number].configure(bg='green')
                               self.keepValueTrue[block_number]=TRUE
+                              
                               print('True')
                         else:
                               self.entry[block_number].configure(bg='red')
@@ -115,6 +134,7 @@ class Main:
             print("SERVER START!")
             clientsocket,addr=serversocket.accept()
             print("CLIENT CONNECT ALREADY!")
+            clientsocket.send("KAOKAO")
 
       def joinServer(self):
              s = socket.socket(socket.AF_INET , socket.SOCK_STREAM)
@@ -124,6 +144,8 @@ class Main:
              try:
                   s.connect((host,port))
                   print("YOU CONNECTED ALREADY!")
+                  score=s.recv(1024)
+                  self.setMyscore(5)
              except  socket.error as msg:
                    print (msg)
         
